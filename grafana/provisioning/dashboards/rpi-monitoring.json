@@ -2994,7 +2994,7 @@
       "type": "table"
     }
   ],
-  "refresh": "5s",
+  "refresh": "2h",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],

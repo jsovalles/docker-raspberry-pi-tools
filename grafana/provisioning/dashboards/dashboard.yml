@@ -6,7 +6,7 @@ providers:
     folder: ""
     type: "file"
     disableDeletion: true
-    editable: true
-    updateIntervalSeconds: 10 # Check for dashboard updates every 10 seconds
+    editable: false
+    updateIntervalSeconds: 60 # Check for dashboard updates every 60 seconds
     options:
       path: /etc/grafana/provisioning/dashboards

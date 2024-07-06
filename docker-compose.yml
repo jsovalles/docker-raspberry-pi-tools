@@ -12,10 +12,6 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
 
   prometheus:
     image: prom/prometheus:latest
@@ -35,10 +31,6 @@ services:
       - cadvisor
       - node-exporter
       - influxdb
-    deploy:
-      resources:
-        limits:
-          cpus: "1.5"
 
   influxdb:
     image: arm32v7/influxdb:latest
@@ -55,10 +47,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: "1.5"
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -77,10 +65,6 @@ services:
       - --path.rootfs=/host
       - --collector.filesystem.ignored-mount-points
       - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
-    deploy:
-      resources:
-        limits:
-          cpus: "0.8"
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -102,10 +86,6 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
       - /etc/machine-id:/etc/machine-id:ro
-    deploy:
-      resources:
-        limits:
-          cpus: "0.8"
 
   ## optional
   # chronograf:
