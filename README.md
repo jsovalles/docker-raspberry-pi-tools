@@ -79,3 +79,26 @@ cAdvisor (Container Advisor) provides container users an understanding of the re
 
 wg-easy is a user-friendly WireGuard VPN server dashboard, making it easy to set up and manage a WireGuard VPN server with a simple web interface. It provides configuration options and statistics for WireGuard tunnels.
 
+## Common Problems
+
+### Docker stats doesn't report memory usage
+
+If you notice that cAdvisor is not reporting memory usage, you can resolve this by enabling memory cgroup in your Raspberry Pi configuration:
+
+1. Open the `/boot/firmware/cmdline.txt` file in a text editor.
+2. Add the following parameters to the end of the line:
+
+    ```bash
+    cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
+    ```
+
+3. Save the file and reboot your Raspberry Pi.
+
+For more details, you can refer to this [GitHub issue comment](https://github.com/docker/for-linux/issues/1112#issuecomment-699512425).
+
+### Bandwidth issues between a WireGuard Peer and a WireGuard server
+
+If you experience bandwidth issues between a WireGuard peer and the WireGuard server, adjusting the MTU (Maximum Transmission Unit) can help improve the connection.
+
+1. Change the client's MTU setting to 1200. This can often resolve the issue.
+2. If the problem persists, you may need to find the optimal MTU for your specific network conditions. Refer to the following [gist](https://gist.github.com/nitred/f16850ca48c48c79bf422e90ee5b9d95) for detailed instructions on determining the best MTU setting.
