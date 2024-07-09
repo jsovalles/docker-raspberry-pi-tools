@@ -87,6 +87,24 @@ services:
       - /dev/disk/:/dev/disk:ro
       - /etc/machine-id:/etc/machine-id:ro
 
+  wg-easy:
+    env_file:
+      - .env
+    image: ghcr.io/wg-easy/wg-easy
+    container_name: wg-easy
+    #volumes:
+    #  - etc_wireguard:/etc/wireguard
+    ports:
+      - "8801:8801/udp"
+      - "8802:8802/tcp"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+
   ## optional
   # chronograf:
   #  image: chronograf:latest
@@ -100,3 +118,4 @@ volumes:
   #prometheus_data:
   #grafana_data:
   influxdb_data:
+  #etc_wireguard:
