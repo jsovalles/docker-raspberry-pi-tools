@@ -2,6 +2,14 @@
 
 Collection of Docker Compose configurations and scripts tailored for efficient deployment and management of applications on Raspberry Pi.
 
+## Pre-requisites
+
+### Docker Installation for Raspberry Pi
+
+To install Docker on a Raspberry Pi with a 64-bit operating system, follow the instructions provided in the official Docker documentation:
+
+[Docker Engine Installation for Debian](https://docs.docker.com/engine/install/debian/)
+
 ## Environment Variables
 
 To run this project, you need to define the following environment variables in an `.env` file located in the root directory of your project.
