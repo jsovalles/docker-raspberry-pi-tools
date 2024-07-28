@@ -17,29 +17,29 @@ alerting:
   # - "first_rules.yml"
   # - "second_rules.yml"
 
-# Remote write and read configurations
-remote_write:
-  - url: "http://influxdb:8086/api/v1/prom/write?db=prometheus"
-    # Optional basic_auth if InfluxDB requires authentication
-    basic_auth:
-      username: ${INFLUXDB_ADMIN_USER}
-      password: ${INFLUXDB_ADMIN_PASSWORD}
-    remote_timeout: 60s
-    queue_config:
-      max_samples_per_send: 100
-      batch_send_deadline: 5s
-      capacity: 2500
-      min_backoff: 5s
-      max_backoff: 100s
+# Remote write and read configurations (Optional if using influxDB to persist this data)
+# remote_write:
+#   - url: "http://influxdb:8086/api/v1/prom/write?db=prometheus"
+#     # Optional basic_auth if InfluxDB requires authentication
+#     basic_auth:
+#       username: ${INFLUXDB_ADMIN_USER}
+#       password: ${INFLUXDB_ADMIN_PASSWORD}
+#     remote_timeout: 60s
+#     queue_config:
+#       max_samples_per_send: 100
+#       batch_send_deadline: 5s
+#       capacity: 2500
+#       min_backoff: 5s
+#       max_backoff: 100s
 
-remote_read:
-  - url: "http://influxdb:8086/api/v1/prom/read?db=prometheus"
-    # Optional basic_auth if InfluxDB requires authentication
-    basic_auth:
-      username: ${INFLUXDB_ADMIN_USER}
-      password: ${INFLUXDB_ADMIN_PASSWORD}
-    remote_timeout: 60s
-    read_recent: true
+# remote_read:
+#   - url: "http://influxdb:8086/api/v1/prom/read?db=prometheus"
+#     # Optional basic_auth if InfluxDB requires authentication
+#     basic_auth:
+#       username: ${INFLUXDB_ADMIN_USER}
+#       password: ${INFLUXDB_ADMIN_PASSWORD}
+#     remote_timeout: 60s
+#     read_recent: true
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.

@@ -22,7 +22,7 @@ GF_PATHS_PLUGINS=/var/lib/grafana/plugins
 GF_PATHS_PROVISIONING=/etc/grafana/provisioning
 GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/rpi-monitoring.json
 
-## InfluxDB and prometheus
+## InfluxDB
 INFLUXDB_DB=prometheus # Change influxdb db on prometheus.yml if you change this
 INFLUXDB_ADMIN_USER=your_user
 INFLUXDB_ADMIN_PASSWORD=your_pass

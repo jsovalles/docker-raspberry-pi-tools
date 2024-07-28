@@ -23,30 +23,14 @@ services:
       - .env
     volumes:
       - ./prometheus:/etc/prometheus
-      #- prometheus_data:/prometheus
+      - prometheus_data:/prometheus
     command:
       - "--storage.tsdb.path=/prometheus"
       - "--config.file=/etc/prometheus/prometheus.yml"
     depends_on:
       - cadvisor
       - node-exporter
-      - influxdb
-
-  influxdb:
-    image: arm32v7/influxdb:latest
-    container_name: influxdb
-    restart: unless-stopped
-    ports:
-      - "8086:8086"
-    env_file:
-      - .env
-    volumes:
-      - influxdb_data:/var/lib/influxdb
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://influxdb:8086/ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      #- influxdb
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -92,8 +76,8 @@ services:
       - .env
     image: ghcr.io/wg-easy/wg-easy
     container_name: wg-easy
-    #volumes:
-    #  - etc_wireguard:/etc/wireguard
+    volumes:
+      - etc_wireguard:/etc/wireguard
     ports:
       - "8801:8801/udp"
       - "8802:8802/tcp"
@@ -114,8 +98,24 @@ services:
   #  depends_on:
   #    - influxdb
 
+  # influxdb:
+  # image: arm32v7/influxdb:latest
+  # container_name: influxdb
+  # restart: unless-stopped
+  # ports:
+  #   - "8086:8086"
+  # env_file:
+  #   - .env
+  # volumes:
+  #   - influxdb_data:/var/lib/influxdb
+  # healthcheck:
+  #   test: ["CMD", "curl", "-f", "http://influxdb:8086/ping"]
+  #   interval: 30s
+  #   timeout: 10s
+  #   retries: 5
+
 volumes:
-  #prometheus_data:
+  prometheus_data:
   #grafana_data:
-  influxdb_data:
-  #etc_wireguard:
+  #influxdb_data:
+  etc_wireguard:
