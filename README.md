@@ -31,9 +31,9 @@ GF_PATHS_PROVISIONING=/etc/grafana/provisioning
 GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/rpi-monitoring.json
 
 ## InfluxDB
-INFLUXDB_DB=prometheus # Change influxdb db on prometheus.yml if you change this
-INFLUXDB_ADMIN_USER=your_user
-INFLUXDB_ADMIN_PASSWORD=your_pass
+#INFLUXDB_DB=prometheus # Change influxdb db on prometheus.yml if you change this
+#INFLUXDB_ADMIN_USER=your_user
+#INFLUXDB_ADMIN_PASSWORD=your_pass
 
 ## wg-easy
 # ⚠️ Change the server's hostname (clients will connect to):
