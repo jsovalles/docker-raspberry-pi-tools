@@ -92,7 +92,7 @@ cAdvisor (Container Advisor) provides container users an understanding of the re
 
 wg-easy is a user-friendly WireGuard VPN server dashboard, making it easy to set up and manage a WireGuard VPN server with a simple web interface. It provides configuration options and statistics for WireGuard tunnels.
 
-### [Pi-hole](https://github.com/pi-hole/docker-pi-hole/#running-pi-hole-docker)
+### [Pi-hole](https://github.com/pi-hole/docker-pi-hole)
 
 Pi-hole is a network-wide ad blocker that acts as a DNS sinkhole, blocking unwanted content across your entire network. It is often used for enhancing privacy and security by blocking tracking and ads.
 
