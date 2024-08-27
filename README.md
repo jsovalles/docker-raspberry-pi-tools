@@ -45,9 +45,9 @@ WG_DEFAULT_DNS=default.dns
 ## For split tunnel use
 # WG_ALLOWED_IPS=192.168.0.0/24,10.8.0.0/24
 WG_PERSISTENT_KEEPALIVE=25
-# Optional:
 PORT=your_port
 WG_PORT=your_port
+# Optional:
 # WG_DEFAULT_ADDRESS=10.8.0.x
 # WG_MTU=1420
 # WG_PERSISTENT_KEEPALIVE=25
@@ -57,6 +57,11 @@ WG_PORT=your_port
 # WG_POST_DOWN=echo "Post Down" > /etc/wireguard/post-down.txt
 # UI_TRAFFIC_STATS=true
 # UI_CHART_TYPE=0 # (0 Charts disabled, 1 # Line chart, 2 # Area chart, 3 # Bar chart)
+
+# Pi-hole Environment Variables
+TZ=your_timezone
+WEBPASSWORD=your_web_password
+FTLCONF_LOCAL_IPV4=your_raspberri_pi_ipv4
 ```
 
 ## Tools Used
@@ -86,6 +91,14 @@ cAdvisor (Container Advisor) provides container users an understanding of the re
 ### [wg-easy](https://github.com/wg-easy/wg-easy)
 
 wg-easy is a user-friendly WireGuard VPN server dashboard, making it easy to set up and manage a WireGuard VPN server with a simple web interface. It provides configuration options and statistics for WireGuard tunnels.
+
+### [Pi-hole](https://github.com/pi-hole/docker-pi-hole/#running-pi-hole-docker)
+
+Pi-hole is a network-wide ad blocker that acts as a DNS sinkhole, blocking unwanted content across your entire network. It is often used for enhancing privacy and security by blocking tracking and ads.
+
+### [Unbound](https://github.com/MatthewVance/unbound-docker-rpi)
+
+Unbound is a validating, recursive, caching DNS resolver. It enhances privacy by running locally on your network and ensures DNS queries are secure and accurate.
 
 ## Common Problems
 
