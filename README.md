@@ -14,7 +14,6 @@ To install Docker on a Raspberry Pi with a 64-bit operating system, follow the i
 
 To run this project, you need to define the following environment variables in an `.env` file located in the root directory of your project.
 
-
 ```dotenv
 ## Grafana
 
@@ -66,39 +65,21 @@ FTLCONF_LOCAL_IPV4=your_raspberri_pi_ipv4
 
 ## Tools Used
 
-This project uses several tools to provide a comprehensive monitoring and management solution for applications running on a Raspberry Pi. Below is a list of the services included in the Docker Compose configuration.
+- **[Grafana](https://grafana.com/docs/)**: Platform for monitoring and observability with customizable dashboards.
 
-### [Grafana](https://grafana.com/docs/)
+- **[Prometheus](https://prometheus.io/docs/introduction/overview/)**: Systems monitoring and alerting toolkit, optimized for time-series data.
 
-Grafana is an open-source platform for monitoring and observability. It provides dashboards and visualizations for time-series data, making it easy to analyze and visualize metrics from different data sources.
+- **[InfluxDB](https://docs.influxdata.com/influxdb/v1.8/introduction/)**: Time-series database for handling metrics and events with high write and query loads.
 
-### [Prometheus](https://prometheus.io/docs/introduction/overview/)
+- **[Node Exporter](https://prometheus.io/docs/guides/node-exporter/)**: Prometheus exporter for hardware and OS metrics from \*NIX systems.
 
-Prometheus is an open-source systems monitoring and alerting toolkit. It is designed for reliability and scalability, collecting and storing its metrics as time series data, recording real-time metrics in a time series database built using a HTTP pull model.
+- **[cAdvisor](https://github.com/google/cadvisor)**: Daemon for monitoring and analyzing resource usage of running containers.
 
-### [InfluxDB](https://docs.influxdata.com/influxdb/v1.8/introduction/)
+- **[wg-easy](https://github.com/wg-easy/wg-easy)**: Web interface for easy management of a WireGuard VPN server.
 
-InfluxDB is an open-source time-series database designed to handle high write and query loads. It is optimized for storing time series data, including metrics and events, and provides a powerful query language for analysis.
+- **[Pi-hole](https://github.com/pi-hole/docker-pi-hole)**: Network-wide ad blocker that acts as a DNS sinkhole to block unwanted content.
 
-### [Node Exporter](https://prometheus.io/docs/guides/node-exporter/)
-
-Node Exporter is a Prometheus exporter for hardware and OS metrics exposed by *NIX kernels. It allows for the collection of various system metrics, such as CPU, memory, disk usage, and network statistics.
-
-### [cAdvisor](https://github.com/google/cadvisor)
-
-cAdvisor (Container Advisor) provides container users an understanding of the resource usage and performance characteristics of their running containers. It is a running daemon that collects, aggregates, processes, and exports information about running containers.
-
-### [wg-easy](https://github.com/wg-easy/wg-easy)
-
-wg-easy is a user-friendly WireGuard VPN server dashboard, making it easy to set up and manage a WireGuard VPN server with a simple web interface. It provides configuration options and statistics for WireGuard tunnels.
-
-### [Pi-hole](https://github.com/pi-hole/docker-pi-hole)
-
-Pi-hole is a network-wide ad blocker that acts as a DNS sinkhole, blocking unwanted content across your entire network. It is often used for enhancing privacy and security by blocking tracking and ads.
-
-### [Unbound](https://github.com/MatthewVance/unbound-docker-rpi)
-
-Unbound is a validating, recursive, caching DNS resolver. It enhances privacy by running locally on your network and ensures DNS queries are secure and accurate.
+- **[Unbound](https://github.com/MatthewVance/unbound-docker-rpi)**: Validating, recursive, caching DNS resolver focused on privacy and security.
 
 ## Common Problems
 
@@ -109,9 +90,9 @@ If you notice that cAdvisor is not reporting memory usage, you can resolve this 
 1. Open the `/boot/firmware/cmdline.txt` file in a text editor.
 2. Add the following parameters to the end of the line:
 
-    ```bash
-    cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
-    ```
+```bash
+cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
+```
 
 3. Save the file and reboot your Raspberry Pi.
 
