@@ -57,17 +57,18 @@ WG_PORT=your_port
 # UI_TRAFFIC_STATS=true
 # UI_CHART_TYPE=0 # (0 Charts disabled, 1 # Line chart, 2 # Area chart, 3 # Bar chart)
 
-# Pi-hole Environment Variables
+## Pi-hole
 TZ=your_timezone
 WEBPASSWORD=your_web_password
 FTLCONF_LOCAL_IPV4=your_raspberri_pi_ipv4
 
-# Watchtower environment variables
+## Watchtower
 # TZ variable is already defined on pihole
 WATCHTOWER_CLEANUP=true
 WATCHTOWER_HTTP_API_METRICS=true
 WATCHTOWER_HTTP_API_TOKEN=nVDwNXfZiSVpYz97kdVk
-WATCHTOWER_SCHEDULE="0 0 1 * * *" # 1am each
+# scheduled for 1am each day
+WATCHTOWER_SCHEDULE="0 0 1 * * *"
 # Optional
 # If you want notifications via discord, slack, etc
 WATCHTOWER_NOTIFICATION_REPORT=true
