@@ -61,6 +61,19 @@ WG_PORT=your_port
 TZ=your_timezone
 WEBPASSWORD=your_web_password
 FTLCONF_LOCAL_IPV4=your_raspberri_pi_ipv4
+
+# Watchtower environment variables
+# TZ variable is already defined on pihole
+WATCHTOWER_CLEANUP=true
+WATCHTOWER_HTTP_API_METRICS=true
+WATCHTOWER_HTTP_API_TOKEN=nVDwNXfZiSVpYz97kdVk
+WATCHTOWER_SCHEDULE="0 0 1 * * *" # 1am each
+# Optional
+# If you want notifications via discord, slack, etc
+WATCHTOWER_NOTIFICATION_REPORT=true
+WATCHTOWER_NOTIFICATION_URL="discord://token@channel"
+# monitor only for testing purposes
+#WATCHTOWER_MONITOR_ONLY=true
 ```
 
 ## Tools Used
@@ -80,6 +93,8 @@ FTLCONF_LOCAL_IPV4=your_raspberri_pi_ipv4
 - **[Pi-hole](https://github.com/pi-hole/docker-pi-hole)**: Network-wide ad blocker that acts as a DNS sinkhole to block unwanted content.
 
 - **[Unbound](https://github.com/MatthewVance/unbound-docker-rpi)**: Validating, recursive, caching DNS resolver focused on privacy and security.
+
+- **[Watchtower](https://containrrr.dev/watchtower/)**: Tool for automating Docker container updates, ensuring that running containers are always up-to-date.
 
 ## Common Problems
 

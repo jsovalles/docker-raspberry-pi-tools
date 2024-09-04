@@ -74,7 +74,7 @@ services:
   wg-easy:
     env_file:
       - .env
-    image: ghcr.io/wg-easy/wg-easy
+    image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wg-easy
     volumes:
       - etc_wireguard:/etc/wireguard
@@ -115,6 +115,8 @@ services:
       - 172.30.0.2
       - 1.1.1.1
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.monitor-only=true"
     depends_on:
       - unbound
 
@@ -130,6 +132,16 @@ services:
         ipv4_address: 172.30.0.2
     restart: unless-stopped
 
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    env_file:
+      - .env
+    ports:
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
   ## optional
   # chronograf:
   #  image: chronograf:latest
