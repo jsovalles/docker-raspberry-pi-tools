@@ -37,8 +37,8 @@ GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/r
 ## wg-easy
 # ⚠️ Change the server's hostname (clients will connect to):
 WG_HOST=your.domain.com
-# ⚠️ Change the Web UI Password:
-PASSWORD=your_ui_pass
+# ⚠️ Change the Web UI Password (https://github.com/wg-easy/wg-easy/blob/master/How_to_generate_an_bcrypt_hash.md): 
+PASSWORD_HASH=your_ui_pass
 # 💡 This is the Pi-Hole Container's IP Address
 WG_DEFAULT_DNS=default.dns
 ## For split tunnel use
@@ -66,6 +66,7 @@ FTLCONF_LOCAL_IPV4=your_raspberri_pi_ipv4
 # TZ variable is already defined on pihole
 WATCHTOWER_CLEANUP=true
 WATCHTOWER_HTTP_API_METRICS=true
+# TODO: Watchtower token env var seems to have a bug on prometheus.yml, change this constant if you want
 WATCHTOWER_HTTP_API_TOKEN=nVDwNXfZiSVpYz97kdVk
 # scheduled for 1am each day
 WATCHTOWER_SCHEDULE="0 0 1 * * *"
