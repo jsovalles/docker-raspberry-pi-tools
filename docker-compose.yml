@@ -1,4 +1,18 @@
 services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:latest
+    container_name: nginx-proxy
+    ports:
+      - '80:80'
+    environment:
+      DEFAULT_HOST: pihole.local
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock'
+    networks:
+      dns:
+        ipv4_address: 172.30.0.5
+    restart: always
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -7,9 +21,15 @@ services:
       - 3000:3000
     env_file:
       - .env
+    environment:
+      VIRTUAL_HOST: grafana.local
+      VIRTUAL_PORT: 3000
     volumes:
       #- grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      dns:
+        ipv4_address: 172.30.0.6
     depends_on:
       - prometheus
 
@@ -21,12 +41,18 @@ services:
       - "9090:9090"
     env_file:
       - .env
+    environment:
+      VIRTUAL_HOST: prometheus.local
+      VIRTUAL_PORT: 9090
     volumes:
       - ./prometheus:/etc/prometheus
       - prometheus_data:/prometheus
     command:
       - "--storage.tsdb.path=/prometheus"
       - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      dns:
+        ipv4_address: 172.30.0.7
     depends_on:
       - cadvisor
       - node-exporter
@@ -49,6 +75,9 @@ services:
       - --path.rootfs=/host
       - --collector.filesystem.ignored-mount-points
       - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
+    networks:
+      dns:
+        ipv4_address: 172.30.0.8
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -70,10 +99,16 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
       - /etc/machine-id:/etc/machine-id:ro
+    networks:
+      dns:
+        ipv4_address: 172.30.0.9
 
   wg-easy:
     env_file:
       - .env
+    environment:
+      VIRTUAL_HOST: wg.local
+      VIRTUAL_PORT: "${PORT}"
     image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wg-easy
     volumes:
@@ -98,15 +133,22 @@ services:
     env_file:
       - .env
     environment:
-      - PIHOLE_DNS_:172.30.0.2
-      - DNSSEC:true
-      - DNSMASQ_LISTENING:single
+      PIHOLE_DNS_: 172.30.0.2
+      DNSSEC: true
+      DNSMASQ_LISTENING: single
+      VIRTUAL_HOST: pihole.local
+      VIRTUAL_PORT: 80
+    extra_hosts:
+      - 'pihole pihole.local:${FTLCONF_LOCAL_IPV4}'
+      - 'grafana grafana.local:${FTLCONF_LOCAL_IPV4}'
+      - 'prometheus prometheus.local:${FTLCONF_LOCAL_IPV4}'
+      - 'wireguard wg.local:${FTLCONF_LOCAL_IPV4}'
     volumes:
       - pihole_data:/etc
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "80:80/tcp"
+      - "8053:80/tcp"
       - "443:443/tcp"
     networks:
       dns:
@@ -142,6 +184,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    networks:
+      dns:
+        ipv4_address: 172.30.0.10
   ## optional
   # chronograf:
   #  image: chronograf:latest
