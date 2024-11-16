@@ -40,7 +40,7 @@ WG_HOST=your.domain.com
 # ⚠️ Change the Web UI Password (https://github.com/wg-easy/wg-easy/blob/master/How_to_generate_an_bcrypt_hash.md): 
 PASSWORD_HASH=your_ui_pass
 # 💡 This is the Pi-Hole Container's IP Address
-WG_DEFAULT_DNS=default.dns
+WG_DEFAULT_DNS=172.30.0.3
 ## For split tunnel use
 # WG_ALLOWED_IPS=192.168.0.0/24,10.8.0.0/24
 WG_PERSISTENT_KEEPALIVE=25
@@ -60,7 +60,7 @@ WG_PORT=your_port
 ## Pi-hole
 TZ=your_timezone
 WEBPASSWORD=your_web_password
-FTLCONF_LOCAL_IPV4=your_raspberri_pi_ipv4
+FTLCONF_LOCAL_IPV4=your_raspberry_pi_ipv4
 
 ## Watchtower
 # TZ variable is already defined on pihole
@@ -79,6 +79,8 @@ WATCHTOWER_NOTIFICATION_URL="discord://token@channel"
 ```
 
 ## Tools Used
+
+- **[nginx-proxy](https://github.com/nginx-proxy/nginx-proxy)**: Reverse proxy using NGINX for automatically routing HTTP requests to Docker containers based on environment variables.
 
 - **[Grafana](https://grafana.com/docs/)**: Platform for monitoring and observability with customizable dashboards.
 
