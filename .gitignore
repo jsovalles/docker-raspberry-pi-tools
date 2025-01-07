@@ -1,1 +1,13 @@
 .env
+
+config/home-assistant/*
+!config/home-assistant/
+config/letsencrypt/*
+!config/letsencrypt/
+config/npm/*
+!config/npm/
+config/wireguard/*
+!config/wireguard/
+
+
+

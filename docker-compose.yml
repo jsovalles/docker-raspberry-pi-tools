@@ -1,29 +1,28 @@
 services:
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy:latest
-    container_name: nginx-proxy
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
     ports:
-      - '80:80'
-    environment:
-      DEFAULT_HOST: pihole.local
+      - "80:80"
+      - "443:443"
+      - "81:81"
     volumes:
-      - '/var/run/docker.sock:/tmp/docker.sock'
+      - ./config/npm:/data
+      - ./config/letsencrypt:/etc/letsencrypt
     networks:
       dns:
         ipv4_address: 172.30.0.5
-    restart: always
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
-    ports:
-      - 3000:3000
     env_file:
       - .env
-    environment:
-      VIRTUAL_HOST: grafana.local
-      VIRTUAL_PORT: 3000
+    ports:
+      - 3000:3000
     volumes:
       #- grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -37,13 +36,10 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
-    ports:
-      - "9090:9090"
     env_file:
       - .env
-    environment:
-      VIRTUAL_HOST: prometheus.local
-      VIRTUAL_PORT: 9090
+    #ports:
+    #  - "9090:9090"
     volumes:
       - ./prometheus:/etc/prometheus
       - prometheus_data:/prometheus
@@ -62,8 +58,8 @@ services:
     image: prom/node-exporter:latest
     container_name: node-explorer
     restart: unless-stopped
-    ports:
-      - "9100:9100"
+    #ports:
+    #  - "9100:9100"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -83,8 +79,8 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     restart: unless-stopped
-    ports:
-      - "8080:8080"
+    #ports:
+    #  - "8080:8080"
     command:
       - "-housekeeping_interval=15s"
       - "-docker_only=true"
@@ -104,19 +100,16 @@ services:
         ipv4_address: 172.30.0.9
 
   wg-easy:
-    env_file:
-      - .env
-    environment:
-      VIRTUAL_HOST: wg.local
-      VIRTUAL_PORT: "${PORT}"
     image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wg-easy
-    volumes:
-      - etc_wireguard:/etc/wireguard
+    restart: unless-stopped
+    env_file:
+       - .env
     ports:
       - "${WG_PORT}:${WG_PORT}/udp"
-      - "${PORT}:${PORT}/tcp"
-    restart: unless-stopped
+    #  - "${PORT}:${PORT}/tcp"
+    volumes:
+      - ./config/wireguard:/etc/wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -130,33 +123,32 @@ services:
   pihole:
     image: pihole/pihole:latest
     container_name: pihole
+    restart: unless-stopped
     env_file:
       - .env
     environment:
       PIHOLE_DNS_: 172.30.0.2
       DNSSEC: true
       DNSMASQ_LISTENING: single
-      VIRTUAL_HOST: pihole.local
-      VIRTUAL_PORT: 80
     extra_hosts:
       - 'pihole pihole.local:${FTLCONF_LOCAL_IPV4}'
       - 'grafana grafana.local:${FTLCONF_LOCAL_IPV4}'
       - 'prometheus prometheus.local:${FTLCONF_LOCAL_IPV4}'
       - 'wireguard wg.local:${FTLCONF_LOCAL_IPV4}'
-    volumes:
-      - pihole_data:/etc
+      - 'homeassistant homeassistant.local:${FTLCONF_LOCAL_IPV4}'
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "8053:80/tcp"
-      - "443:443/tcp"
+     # - "8053:80/tcp"
+     # - "443:443/tcp"
+    volumes:
+      - pihole_data:/etc
     networks:
       dns:
         ipv4_address: 172.30.0.3
     dns:
       - 172.30.0.2
       - 1.1.1.1
-    restart: unless-stopped
     labels:
       - "com.centurylinklabs.watchtower.monitor-only=true"
     depends_on:
@@ -165,6 +157,7 @@ services:
   unbound:
     image: mvance/unbound-rpi:latest
     container_name: unbound
+    restart: unless-stopped
     # ports:
     #   - "5335:53/udp" #testing unbound only
     volumes:
@@ -172,21 +165,40 @@ services:
     networks:
       dns:
         ipv4_address: 172.30.0.2
-    restart: unless-stopped
 
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower
+    restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "8081:8080"
+    #ports:
+    #  - "8081:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
     networks:
       dns:
         ipv4_address: 172.30.0.10
+
+  home-assistant:
+    container_name: home-assistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    restart: unless-stopped
+    volumes:
+      - ./config/home-assistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    privileged: true
+    network_mode: host
+    depends_on:
+        grafana:
+            condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "512M"
+
   ## optional
   # chronograf:
   #  image: chronograf:latest
@@ -216,7 +228,6 @@ volumes:
   prometheus_data:
   #grafana_data:
   #influxdb_data:
-  etc_wireguard:
   pihole_data:
 networks:
   dns:
