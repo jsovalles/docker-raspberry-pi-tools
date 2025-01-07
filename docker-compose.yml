@@ -131,11 +131,11 @@ services:
       DNSSEC: true
       DNSMASQ_LISTENING: single
     extra_hosts:
-      - 'pihole pihole.local:${FTLCONF_LOCAL_IPV4}'
-      - 'grafana grafana.local:${FTLCONF_LOCAL_IPV4}'
-      - 'prometheus prometheus.local:${FTLCONF_LOCAL_IPV4}'
-      - 'wireguard wg.local:${FTLCONF_LOCAL_IPV4}'
-      - 'homeassistant homeassistant.local:${FTLCONF_LOCAL_IPV4}'
+      - 'pihole pihole.lan:${FTLCONF_LOCAL_IPV4}'
+      - 'grafana grafana.lan:${FTLCONF_LOCAL_IPV4}'
+      - 'prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}'
+      - 'wireguard wg.lan:${FTLCONF_LOCAL_IPV4}'
+      - 'homeassistant homeassistant.lan:${FTLCONF_LOCAL_IPV4}'
     ports:
       - "53:53/tcp"
       - "53:53/udp"
