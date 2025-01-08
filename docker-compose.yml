@@ -136,6 +136,7 @@ services:
       - 'prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}'
       - 'wireguard wg.lan:${FTLCONF_LOCAL_IPV4}'
       - 'homeassistant homeassistant.lan:${FTLCONF_LOCAL_IPV4}'
+      - 'npm npm.lan:${FTLCONF_LOCAL_IPV4}'
     ports:
       - "53:53/tcp"
       - "53:53/udp"
