@@ -1,1 +1,10 @@
 .env
+.vscode
+
+config/home-assistant/*
+config/letsencrypt/*
+config/npm/*
+config/wireguard/*
+
+
+

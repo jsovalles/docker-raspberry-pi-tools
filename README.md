@@ -2,6 +2,23 @@
 
 Collection of Docker Compose configurations and scripts tailored for efficient deployment and management of applications on Raspberry Pi.
 
+# Table of contents
+
+- [docker-raspberry-pi-tools](#docker-raspberry-pi-tools)
+- [Table of contents](#table-of-contents)
+  - [Pre-requisites](#pre-requisites)
+    - [Docker Installation for Raspberry Pi](#docker-installation-for-raspberry-pi)
+    - [Config Folder Setup](#config-folder-setup)
+      - [Setting Proper Permissions (Optional)](#setting-proper-permissions-optional)
+  - [Environment Variables](#environment-variables)
+  - [Nginx Proxy Manager Configuration](#nginx-proxy-manager-configuration)
+    - [Configuration for .lan Domains](#configuration-for-lan-domains)
+  - [Tools Used](#tools-used)
+  - [Common Problems](#common-problems)
+    - [Docker stats doesn't report memory usage](#docker-stats-doesnt-report-memory-usage)
+    - [Bandwidth issues between a WireGuard Peer and a WireGuard server](#bandwidth-issues-between-a-wireguard-peer-and-a-wireguard-server)
+  - [Additional Notes](#additional-notes)
+
 ## Pre-requisites
 
 ### Docker Installation for Raspberry Pi
@@ -9,6 +26,29 @@ Collection of Docker Compose configurations and scripts tailored for efficient d
 To install Docker on a Raspberry Pi with a 64-bit operating system, follow the instructions provided in the official Docker documentation:
 
 [Docker Engine Installation for Debian](https://docs.docker.com/engine/install/debian/)
+
+### Config Folder Setup
+
+To store configuration data for your containers, create the following folder structure:
+
+```
+config/
+    npm
+    letsencrypt
+    wireguard
+    home-assistant
+```
+
+These directories will serve as local paths for the containerized services' data.
+
+#### Setting Proper Permissions (Optional)
+
+To ensure smooth operation and avoid permission-related issues, assign the correct ownership and permissions to the config/ folder and its subdirectories. Run the following commands:
+
+```bash
+sudo chown -R $USER:$USER ./config
+sudo chmod -R 755 ./config
+```
 
 ## Environment Variables
 
@@ -37,7 +77,7 @@ GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/r
 ## wg-easy
 # ⚠️ Change the server's hostname (clients will connect to):
 WG_HOST=your.domain.com
-# ⚠️ Change the Web UI Password (https://github.com/wg-easy/wg-easy/blob/master/How_to_generate_an_bcrypt_hash.md): 
+# ⚠️ Change the Web UI Password (https://github.com/wg-easy/wg-easy/blob/master/How_to_generate_an_bcrypt_hash.md):
 PASSWORD_HASH=your_ui_pass
 # 💡 This is the Pi-Hole Container's IP Address
 WG_DEFAULT_DNS=172.30.0.3
@@ -78,9 +118,23 @@ WATCHTOWER_NOTIFICATION_URL="discord://token@channel"
 #WATCHTOWER_MONITOR_ONLY=true
 ```
 
+## Nginx Proxy Manager Configuration
+
+Once your Docker container is running, you can access the Nginx Proxy Manager (NPM) admin interface on port **81**. refer to the official [Nginx Proxy Manager guide](https://nginxproxymanager.com/guide/).
+
+### Configuration for .lan Domains
+
+To ensure that `.lan` domains work correctly on your machine, set your DNS resolver to point to your Raspberry Pi (since Pi-hole will be responsible for resolving these domains). Additionally, configure Nginx Proxy Manager as shown below:
+
+<p align="center">
+	<img src="images/npm-configuration.png" alt="Nginx Proxy Manager Configuration">
+</p>
+
+**Important:** Enable **WebSocket support** for the Home Assistant domain. This is necessary for Home Assistant to function correctly.
+
 ## Tools Used
 
-- **[nginx-proxy](https://github.com/nginx-proxy/nginx-proxy)**: Reverse proxy using NGINX for automatically routing HTTP requests to Docker containers based on environment variables.
+- **[nginx-proxy-manager](https://nginxproxymanager.com)**: A reverse proxy using NGINX to automatically route HTTP requests to Docker containers based on environment variables.
 
 - **[Grafana](https://grafana.com/docs/)**: Platform for monitoring and observability with customizable dashboards.
 
@@ -99,6 +153,7 @@ WATCHTOWER_NOTIFICATION_URL="discord://token@channel"
 - **[Unbound](https://github.com/MatthewVance/unbound-docker-rpi)**: Validating, recursive, caching DNS resolver focused on privacy and security.
 
 - **[Watchtower](https://containrrr.dev/watchtower/)**: Tool for automating Docker container updates, ensuring that running containers are always up-to-date.
+- **[Home Assistant](https://www.home-assistant.io/)**: Open source home automation that puts local control and privacy first.
 
 ## Common Problems
 
@@ -123,3 +178,9 @@ If you experience bandwidth issues between a WireGuard peer and the WireGuard se
 
 1. Change the client's MTU setting to 1200. This can often resolve the issue.
 2. If the problem persists, you may need to find the optimal MTU for your specific network conditions. Refer to the following [gist](https://gist.github.com/nitred/f16850ca48c48c79bf422e90ee5b9d95) for detailed instructions on determining the best MTU setting.
+
+## Additional Notes
+
+1. **Environment Variables**: Replace any placeholders in the `.env` file with the actual values relevant to your setup.
+2. **Custom Domains**: If you're using custom domains for services like WireGuard, verify that your DNS records are properly configured to point to your server.
+3. **Storage Optimization**: To enhance performance and extend the lifespan of your Raspberry Pi’s SD card, consider using an external SSD for Docker data storage.
