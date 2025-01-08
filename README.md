@@ -120,24 +120,11 @@ WATCHTOWER_NOTIFICATION_URL="discord://token@channel"
 
 ## Nginx Proxy Manager Configuration
 
-Once your Docker container is running, you can access the Nginx Proxy Manager (NPM) admin interface on port **81**. Keep in mind that the initial setup might take some time due to key generation.
-
-Access the admin interface:
-
-```
-http://127.0.0.1:81
-
-Default Admin User:
-
-Email:    admin@example.com
-Password: changeme
-```
-
-Upon your first login with the default credentials, you will be prompted to update your account details and set a new password. Be sure to complete this step to secure your installation.
+Once your Docker container is running, you can access the Nginx Proxy Manager (NPM) admin interface on port **81**. refer to the official [Nginx Proxy Manager guide](https://nginxproxymanager.com/guide/).
 
 ### Configuration for .lan Domains
 
-To ensure `.lan` domains function properly on your machine, configure Nginx Proxy Manager as shown below:
+To ensure that `.lan` domains work correctly on your machine, set your DNS resolver to point to your Raspberry Pi (since Pi-hole will be responsible for resolving these domains). Additionally, configure Nginx Proxy Manager as shown below:
 
 <p align="center">
 	<img src="images/npm-configuration.png" alt="Nginx Proxy Manager Configuration">
