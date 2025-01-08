@@ -1,6 +1,8 @@
 .env
 .vscode
 
+config.zip
+
 config/home-assistant/*
 config/letsencrypt/*
 config/npm/*
