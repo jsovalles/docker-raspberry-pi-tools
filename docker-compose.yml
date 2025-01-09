@@ -30,7 +30,17 @@ services:
       dns:
         ipv4_address: 172.30.0.6
     depends_on:
-      - prometheus
+      pihole:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://172.30.0.6:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   prometheus:
     image: prom/prometheus:latest
@@ -154,6 +164,12 @@ services:
       - "com.centurylinklabs.watchtower.monitor-only=true"
     depends_on:
       - unbound
+    healthcheck:
+        test: ["CMD", "dig", "+short", "google.com", "@127.0.0.1"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+        start_period: 30s
 
   unbound:
     image: mvance/unbound-rpi:latest
@@ -192,13 +208,18 @@ services:
     privileged: true
     network_mode: host
     depends_on:
-        grafana:
-            condition: service_started
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: "512M"
+      pihole:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    network_mode: host
+    env_file:
+        - .env
+    restart: unless-stopped
 
   ## optional
   # chronograf:
