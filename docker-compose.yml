@@ -1,5 +1,4 @@
 services:
-
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
     container_name: nginx-proxy-manager
@@ -34,7 +33,6 @@ services:
         condition: service_healthy
       prometheus:
         condition: service_started
-
     healthcheck:
       test: ["CMD", "curl", "-f", "http://172.30.0.6:3000/api/health"]
       interval: 30s
@@ -114,7 +112,7 @@ services:
     container_name: wg-easy
     restart: unless-stopped
     env_file:
-       - .env
+      - .env
     ports:
       - "${WG_PORT}:${WG_PORT}/udp"
     #  - "${PORT}:${PORT}/tcp"
@@ -141,17 +139,17 @@ services:
       DNSSEC: true
       DNSMASQ_LISTENING: single
     extra_hosts:
-      - 'pihole pihole.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'grafana grafana.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'wireguard wg.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'homeassistant homeassistant.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'npm npm.lan:${FTLCONF_LOCAL_IPV4}'
+      - "pihole pihole.lan:${FTLCONF_LOCAL_IPV4}"
+      - "grafana grafana.lan:${FTLCONF_LOCAL_IPV4}"
+      - "prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}"
+      - "wireguard wg.lan:${FTLCONF_LOCAL_IPV4}"
+      - "homeassistant homeassistant.lan:${FTLCONF_LOCAL_IPV4}"
+      - "npm npm.lan:${FTLCONF_LOCAL_IPV4}"
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-     # - "8053:80/tcp"
-     # - "443:443/tcp"
+      # - "8053:80/tcp"
+      # - "443:443/tcp"
     volumes:
       - pihole_data:/etc
     networks:
@@ -165,11 +163,11 @@ services:
     depends_on:
       - unbound
     healthcheck:
-        test: ["CMD", "dig", "+short", "google.com", "@127.0.0.1"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
-        start_period: 30s
+      test: ["CMD", "dig", "+short", "google.com", "@127.0.0.1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   unbound:
     image: mvance/unbound-rpi:latest
@@ -218,7 +216,7 @@ services:
     container_name: duckdns
     network_mode: host
     env_file:
-        - .env
+      - .env
     restart: unless-stopped
 
   ## optional
