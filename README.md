@@ -13,6 +13,8 @@ Collection of Docker Compose configurations and scripts tailored for efficient d
   - [Environment Variables](#environment-variables)
   - [Nginx Proxy Manager Configuration](#nginx-proxy-manager-configuration)
     - [Configuration for .lan Domains](#configuration-for-lan-domains)
+    - [Home Assistant Setup](#home-assistant-setup)
+      - [Optional: Install HACS](#optional-install-hacs)
   - [Tools Used](#tools-used)
   - [Common Problems](#common-problems)
     - [Docker stats doesn't report memory usage](#docker-stats-doesnt-report-memory-usage)
@@ -116,6 +118,10 @@ WATCHTOWER_NOTIFICATION_REPORT=true
 WATCHTOWER_NOTIFICATION_URL="discord://token@channel"
 # monitor only for testing purposes
 #WATCHTOWER_MONITOR_ONLY=true
+
+## Duckdns
+SUBDOMAINS=subdomain1,subdomain2
+TOKEN=your_duckdns_token
 ```
 
 ## Nginx Proxy Manager Configuration
@@ -131,6 +137,25 @@ To ensure that `.lan` domains work correctly on your machine, set your DNS resol
 </p>
 
 **Important:** Enable **WebSocket support** for the Home Assistant domain. This is necessary for Home Assistant to function correctly.
+
+### Home Assistant Setup
+
+Follow these steps to configure your Home Assistant container, including support for Nginx proxy `lan` domain and optional integrations.
+
+To enable the Nginx proxy, access the container's bash session `docker exec -it home-assistant bash` and modify the `configuration.yaml` file:
+
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.0.5
+
+# Optional for prometheus container
+prometheus:
+```
+
+#### Optional: Install HACS
+For extra customizations and tools, you can install the Home Assistant Community Store (HACS) on the bash session. Follow the official [HACS installation guide.](https://hacs.xyz/docs/use/download/download/)
 
 ## Tools Used
 
@@ -153,7 +178,10 @@ To ensure that `.lan` domains work correctly on your machine, set your DNS resol
 - **[Unbound](https://github.com/MatthewVance/unbound-docker-rpi)**: Validating, recursive, caching DNS resolver focused on privacy and security.
 
 - **[Watchtower](https://containrrr.dev/watchtower/)**: Tool for automating Docker container updates, ensuring that running containers are always up-to-date.
+
 - **[Home Assistant](https://www.home-assistant.io/)**: Open source home automation that puts local control and privacy first.
+
+- **[Duckdns](https://docs.linuxserver.io/images/docker-duckdns/)**: Free service which will point a DNS (sub domains of duckdns.org) to an IP of your choice.
 
 ## Common Problems
 

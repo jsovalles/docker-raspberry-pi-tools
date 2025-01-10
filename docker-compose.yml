@@ -1,5 +1,4 @@
 services:
-
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
     container_name: nginx-proxy-manager
@@ -30,7 +29,16 @@ services:
       dns:
         ipv4_address: 172.30.0.6
     depends_on:
-      - prometheus
+      pihole:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://172.30.0.6:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   prometheus:
     image: prom/prometheus:latest
@@ -104,7 +112,7 @@ services:
     container_name: wg-easy
     restart: unless-stopped
     env_file:
-       - .env
+      - .env
     ports:
       - "${WG_PORT}:${WG_PORT}/udp"
     #  - "${PORT}:${PORT}/tcp"
@@ -131,17 +139,17 @@ services:
       DNSSEC: true
       DNSMASQ_LISTENING: single
     extra_hosts:
-      - 'pihole pihole.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'grafana grafana.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'wireguard wg.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'homeassistant homeassistant.lan:${FTLCONF_LOCAL_IPV4}'
-      - 'npm npm.lan:${FTLCONF_LOCAL_IPV4}'
+      - "pihole pihole.lan:${FTLCONF_LOCAL_IPV4}"
+      - "grafana grafana.lan:${FTLCONF_LOCAL_IPV4}"
+      - "prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}"
+      - "wireguard wg.lan:${FTLCONF_LOCAL_IPV4}"
+      - "homeassistant homeassistant.lan:${FTLCONF_LOCAL_IPV4}"
+      - "npm npm.lan:${FTLCONF_LOCAL_IPV4}"
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-     # - "8053:80/tcp"
-     # - "443:443/tcp"
+      # - "8053:80/tcp"
+      # - "443:443/tcp"
     volumes:
       - pihole_data:/etc
     networks:
@@ -154,6 +162,12 @@ services:
       - "com.centurylinklabs.watchtower.monitor-only=true"
     depends_on:
       - unbound
+    healthcheck:
+      test: ["CMD", "dig", "+short", "google.com", "@127.0.0.1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   unbound:
     image: mvance/unbound-rpi:latest
@@ -192,13 +206,23 @@ services:
     privileged: true
     network_mode: host
     depends_on:
-        grafana:
-            condition: service_started
-    deploy:
+      pihole:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
+    deploy: #Remove it if you have Rpi 4 or better
       resources:
         limits:
-          cpus: "2.0"
+          cpus: "1.0"
           memory: "512M"
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    network_mode: host
+    env_file:
+      - .env
+    restart: unless-stopped
 
   ## optional
   # chronograf:
