@@ -210,6 +210,11 @@ services:
         condition: service_healthy
       grafana:
         condition: service_healthy
+    deploy: #Remove it if you have Rpi 4 or better
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "512M"
 
   duckdns:
     image: lscr.io/linuxserver/duckdns:latest
