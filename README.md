@@ -212,3 +212,101 @@ If you experience bandwidth issues between a WireGuard peer and the WireGuard se
 1. **Environment Variables**: Replace any placeholders in the `.env` file with the actual values relevant to your setup.
 2. **Custom Domains**: If you're using custom domains for services like WireGuard, verify that your DNS records are properly configured to point to your server.
 3. **Storage Optimization**: To enhance performance and extend the lifespan of your Raspberry Pi’s SD card, consider using an external SSD for Docker data storage.
+
+## Raspberry Pi Docker Error Watcher
+
+This script monitors system logs for a specific Docker error message and automatically reboots the Raspberry Pi when detected.
+
+### Error Condition
+The script watches for the following log entry:
+
+```
+level=error msg="stream copy error: reading from a closed fifo"
+```
+
+### Installation
+
+#### 1. Download the Script
+
+Make the script on this repository executable:
+
+```bash
+chmod +x $(PATH_TO_REPOSITORY)/watch_docker_error.sh
+```
+
+#### 2. Create a Systemd Service
+
+Create a systemd service file:
+
+```bash
+sudo nano /etc/systemd/system/docker-watch.service
+```
+
+Add the following content:
+
+```ini
+[Unit]
+Description=Watch Docker Logs for Error and Reboot
+After=network.target
+
+[Service]
+ExecStart=$(PATH_TO_REPOSITORY)/watch_docker_error.sh
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Save and exit.
+
+#### 3. Enable and Start the Service
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable docker-watch.service
+sudo systemctl start docker-watch.service
+```
+
+### Testing
+
+#### Manually Simulate the Error
+
+You can test the script by appending the error message to the system logs:
+
+```bash
+echo "Mar 08 00:00:47 pihole dockerd[648]: time=\"2025-03-08T00:00:47.845457489-05:00\" level=error msg=\"stream copy error: reading from a closed fifo\"" | sudo tee -a /var/log/syslog
+```
+
+If everything is working correctly, the Raspberry Pi should reboot.
+
+#### Check Service Status
+
+To verify if the service is running:
+
+```bash
+sudo systemctl status docker-watch.service
+```
+
+To view logs:
+
+```bash
+journalctl -u docker-watch.service -f
+```
+
+### Uninstalling
+
+To disable and remove the service:
+
+```bash
+sudo systemctl stop docker-watch.service
+sudo systemctl disable docker-watch.service
+sudo rm /etc/systemd/system/docker-watch.service
+```
+
+Reload systemd:
+
+```bash
+sudo systemctl daemon-reload
+```
+

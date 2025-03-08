@@ -42,6 +42,9 @@ services:
     volumes:
       #- grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
+    dns:
+      - 172.30.0.3
+      - 1.1.1.1
     networks:
       dns:
         ipv4_address: 172.30.0.6
@@ -179,12 +182,10 @@ services:
       - "com.centurylinklabs.watchtower.monitor-only=true"
     depends_on:
       - unbound
-    healthcheck:
-      test: ["CMD", "dig", "+short", "google.com", "@127.0.0.1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 30s
+    deploy: #Remove it if you have Rpi 4 or better
+      resources:
+        limits:
+          cpus: "0.25"
 
   unbound:
     image: mvance/unbound-rpi:latest
@@ -208,6 +209,9 @@ services:
     #  - "8081:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    dns:
+      - 172.30.0.3
+      - 1.1.1.1
     networks:
       dns:
         ipv4_address: 172.30.0.10
@@ -227,7 +231,7 @@ services:
     network_mode: host
     depends_on:
       pihole:
-        condition: service_healthy
+        condition: service_started
       grafana:
         condition: service_started
     deploy: #Remove it if you have Rpi 4 or better
