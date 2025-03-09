@@ -101,7 +101,7 @@ WG_PORT=your_port
 
 ## Pi-hole
 TZ=your_timezone
-WEBPASSWORD=your_web_password
+FTLCONF_webserver_api_password=your_web_password
 FTLCONF_LOCAL_IPV4=your_raspberry_pi_ipv4
 
 ## Watchtower

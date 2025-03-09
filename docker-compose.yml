@@ -153,9 +153,9 @@ services:
     env_file:
       - .env
     environment:
-      PIHOLE_DNS_: 172.30.0.2
-      DNSSEC: true
-      DNSMASQ_LISTENING: single
+      FTLCONF_dns_upstreams: 172.30.0.2
+      FTLCONF_dns_dnssec: true
+      FTLCONF_dns_listeningMode: single
       VIRTUAL_HOST: pihole.lan
       VIRTUAL_PORT: 80
     extra_hosts:
