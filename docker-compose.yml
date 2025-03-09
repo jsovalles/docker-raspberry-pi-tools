@@ -185,7 +185,7 @@ services:
     deploy: #Remove it if you have Rpi 4 or better
       resources:
         limits:
-          cpus: "0.25"
+          cpus: "0.50"
 
   unbound:
     image: mvance/unbound-rpi:latest
