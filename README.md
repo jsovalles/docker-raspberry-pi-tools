@@ -287,7 +287,7 @@ sudo systemctl start docker-watch.service
 You can test the script by appending the error message to the system logs:
 
 ```bash
-echo "Mar 08 00:00:47 pihole dockerd[648]: time=\"2025-03-08T00:00:47.845457489-05:00\" level=error msg=\"stream copy error: reading from a closed fifo\"" | sudo tee -a /var/log/syslog
+echo "Mar 08 00:00:47 pihole dockerd[648]: time=\"2025-03-08T00:00:47.845457489-05:00\" level=error msg=\"stream copy error: reading from a closed fifo\"" | sudo systemd-cat -t dockerd -p err
 ```
 
 If everything is working correctly, the Raspberry Pi should reboot.
