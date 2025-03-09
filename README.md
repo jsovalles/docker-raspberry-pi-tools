@@ -20,6 +20,16 @@ Collection of Docker Compose configurations and scripts tailored for efficient d
     - [Docker stats doesn't report memory usage](#docker-stats-doesnt-report-memory-usage)
     - [Bandwidth issues between a WireGuard Peer and a WireGuard server](#bandwidth-issues-between-a-wireguard-peer-and-a-wireguard-server)
   - [Additional Notes](#additional-notes)
+  - [Raspberry Pi Docker Error Watcher](#raspberry-pi-docker-error-watcher)
+    - [Error Condition](#error-condition)
+    - [Installation](#installation)
+      - [1. Download the Script](#1-download-the-script)
+      - [2. Create a Systemd Service](#2-create-a-systemd-service)
+      - [3. Enable and Start the Service](#3-enable-and-start-the-service)
+    - [Testing](#testing)
+      - [Manually Simulate the Error](#manually-simulate-the-error)
+      - [Check Service Status](#check-service-status)
+    - [Uninstalling](#uninstalling)
 
 ## Pre-requisites
 
@@ -155,6 +165,7 @@ prometheus:
 ```
 
 #### Optional: Install HACS
+
 For extra customizations and tools, you can install the Home Assistant Community Store (HACS) on the bash session. Follow the official [HACS installation guide.](https://hacs.xyz/docs/use/download/download/)
 
 ## Tools Used
@@ -218,6 +229,7 @@ If you experience bandwidth issues between a WireGuard peer and the WireGuard se
 This script monitors system logs for a specific Docker error message and automatically reboots the Raspberry Pi when detected.
 
 ### Error Condition
+
 The script watches for the following log entry:
 
 ```
@@ -309,4 +321,3 @@ Reload systemd:
 ```bash
 sudo systemctl daemon-reload
 ```
-
