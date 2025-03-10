@@ -147,15 +147,15 @@ services:
         ipv4_address: 172.30.0.4
 
   pihole:
-    image: pihole/pihole:latest
+    image: pihole/pihole:2024.07.0
     container_name: pihole
     restart: unless-stopped
     env_file:
       - .env
     environment:
-      FTLCONF_dns_upstreams: 172.30.0.2
-      FTLCONF_dns_dnssec: true
-      FTLCONF_dns_listeningMode: single
+      PIHOLE_DNS_: 172.30.0.2
+      DNSSEC: true
+      DNSMASQ_LISTENING: single
       VIRTUAL_HOST: pihole.lan
       VIRTUAL_PORT: 80
     extra_hosts:
@@ -179,13 +179,13 @@ services:
       - 172.30.0.2
       - 1.1.1.1
     labels:
-      - "com.centurylinklabs.watchtower.monitor-only=true"
+      - "com.centurylinklabs.watchtower.enable=false"
     depends_on:
       - unbound
     deploy: #Remove it if you have Rpi 4 or better
       resources:
         limits:
-          cpus: "0.50"
+          cpus: "0.25"
 
   unbound:
     image: mvance/unbound-rpi:latest
