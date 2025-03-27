@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ERROR_MSG="stream copy error: reading from a closed fifo"
+ERROR_MSG="reading from a closed fifo"
 ERROR_COUNT=0
 MAX_ERRORS=10
 LAST_ERROR_TIME=0  # Store last error timestamp
