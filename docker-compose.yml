@@ -163,7 +163,7 @@ services:
       - "grafana grafana.lan:${FTLCONF_LOCAL_IPV4}"
       - "prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}"
       - "wireguard wg.lan:${FTLCONF_LOCAL_IPV4}"
-      - "homeassistant homeassistant.lan:${FTLCONF_LOCAL_IPV4}"
+      - "homeassistant homeassistant.lan:192.168.0.168"
       - "npm npm.lan:${FTLCONF_LOCAL_IPV4}"
     ports:
       - "53:53/tcp"
@@ -182,10 +182,6 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
     depends_on:
       - unbound
-    deploy: #Remove it if you have Rpi 4 or better
-      resources:
-        limits:
-          cpus: "0.25"
 
   unbound:
     image: mvance/unbound-rpi:latest
@@ -216,29 +212,29 @@ services:
       dns:
         ipv4_address: 172.30.0.10
 
-  home-assistant:
-    container_name: home-assistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
-    restart: unless-stopped
-    environment:
-      VIRTUAL_HOST: homeassistant.lan
-      VIRTUAL_PORT: 8123
-    volumes:
-      - ./config/home-assistant:/config
-      - /etc/localtime:/etc/localtime:ro
-      - /run/dbus:/run/dbus:ro
-    privileged: true
-    network_mode: host
-    depends_on:
-      pihole:
-        condition: service_started
-      grafana:
-        condition: service_started
-    deploy: #Remove it if you have Rpi 4 or better
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: "256M"
+#  home-assistant:
+#    container_name: home-assistant
+#    image: "ghcr.io/home-assistant/home-assistant:stable"
+#    restart: unless-stopped
+#    environment:
+#      VIRTUAL_HOST: homeassistant.lan
+#      VIRTUAL_PORT: 8123
+#    volumes:
+#      - ./config/home-assistant:/config
+#      - /etc/localtime:/etc/localtime:ro
+#      - /run/dbus:/run/dbus:ro
+#    privileged: true
+#    network_mode: host
+#    depends_on:
+#      pihole:
+#        condition: service_started
+#      grafana:
+#        condition: service_started
+#    deploy: #Remove it if you have Rpi 4 or better
+#      resources:
+#        limits:
+#          cpus: "1.0"
+#          memory: "400M"
 
 #  duckdns:
 #    image: lscr.io/linuxserver/duckdns:latest
