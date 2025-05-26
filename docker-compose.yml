@@ -9,6 +9,7 @@ services:
       - '80:80'
     volumes:
       - '/var/run/docker.sock:/tmp/docker.sock'
+      - nginx_proxy_data:/etc/nginx
     networks:
       dns:
         ipv4_address: 172.30.0.5
@@ -40,7 +41,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      #- grafana_data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
     dns:
       - 172.30.0.3
@@ -163,7 +164,7 @@ services:
       - "grafana grafana.lan:${FTLCONF_LOCAL_IPV4}"
       - "prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}"
       - "wireguard wg.lan:${FTLCONF_LOCAL_IPV4}"
-      - "homeassistant homeassistant.lan:192.168.0.168"
+      - "homeassistant homeassistant.lan:192.168.0.138"
       - "npm npm.lan:${FTLCONF_LOCAL_IPV4}"
     ports:
       - "53:53/tcp"
@@ -191,6 +192,7 @@ services:
     #   - "5335:53/udp" #testing unbound only
     volumes:
       - ./unbound/forward-records.conf:/opt/unbound/etc/unbound/forward-records.conf
+      - unbound_data:/opt/unbound/etc/unbound
     networks:
       dns:
         ipv4_address: 172.30.0.2
@@ -211,6 +213,8 @@ services:
     networks:
       dns:
         ipv4_address: 172.30.0.10
+    depends_on:
+      - pihole
 
 #  home-assistant:
 #    container_name: home-assistant
@@ -271,9 +275,11 @@ services:
 
 volumes:
   prometheus_data:
-  #grafana_data:
+  grafana_data:
   #influxdb_data:
   pihole_data:
+  unbound_data:
+  nginx_proxy_data:
 networks:
   dns:
     driver: bridge
