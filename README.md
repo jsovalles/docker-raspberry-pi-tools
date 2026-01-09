@@ -11,7 +11,7 @@ Collection of Docker Compose configurations and scripts tailored for efficient d
     - [Config Folder Setup](#config-folder-setup)
       - [Setting Proper Permissions (Optional)](#setting-proper-permissions-optional)
   - [Environment Variables](#environment-variables)
-  - [Nginx Proxy Manager Configuration](#nginx-proxy-manager-configuration)
+  - [Nginx Proxy Configuration](#nginx-proxy-configuration)
     - [Configuration for .lan Domains](#configuration-for-lan-domains)
     - [Home Assistant Setup](#home-assistant-setup)
       - [Optional: Install HACS](#optional-install-hacs)
@@ -20,16 +20,6 @@ Collection of Docker Compose configurations and scripts tailored for efficient d
     - [Docker stats doesn't report memory usage](#docker-stats-doesnt-report-memory-usage)
     - [Bandwidth issues between a WireGuard Peer and a WireGuard server](#bandwidth-issues-between-a-wireguard-peer-and-a-wireguard-server)
   - [Additional Notes](#additional-notes)
-  - [Raspberry Pi Docker Error Watcher](#raspberry-pi-docker-error-watcher)
-    - [Error Condition](#error-condition)
-    - [Installation](#installation)
-      - [1. Download the Script](#1-download-the-script)
-      - [2. Create a Systemd Service](#2-create-a-systemd-service)
-      - [3. Enable and Start the Service](#3-enable-and-start-the-service)
-    - [Testing](#testing)
-      - [Manually Simulate the Error](#manually-simulate-the-error)
-      - [Check Service Status](#check-service-status)
-    - [Uninstalling](#uninstalling)
 
 ## Pre-requisites
 
@@ -113,6 +103,7 @@ WG_PORT=your_port
 TZ=your_timezone
 WEBPASSWORD=your_web_password
 FTLCONF_LOCAL_IPV4=your_raspberry_pi_ipv4
+HOME_ASSISTANT_IPV4=your_home_assistant_ipv4
 
 ## Watchtower
 # TZ variable is already defined on pihole
@@ -134,19 +125,13 @@ SUBDOMAINS=subdomain1,subdomain2
 TOKEN=your_duckdns_token
 ```
 
-## Nginx Proxy Manager Configuration
+## Nginx Proxy Configuration
 
-Once your Docker container is running, you can access the Nginx Proxy Manager (NPM) admin interface on port **81**. refer to the official [Nginx Proxy Manager guide](https://nginxproxymanager.com/guide/).
+> **TODO:** Migrate from nginx-proxy to Traefik for more advanced features and better configuration management.
 
 ### Configuration for .lan Domains
 
-To ensure that `.lan` domains work correctly on your machine, set your DNS resolver to point to your Raspberry Pi (since Pi-hole will be responsible for resolving these domains). Additionally, configure Nginx Proxy Manager as shown below:
-
-<p align="center">
-	<img src="images/npm-configuration.png" alt="Nginx Proxy Manager Configuration">
-</p>
-
-**Important:** Enable **WebSocket support** for the Home Assistant domain. This is necessary for Home Assistant to function correctly.
+The nginx-proxy container automatically creates reverse proxy configurations for containers with `VIRTUAL_HOST` environment variables. To ensure that `.lan` domains work correctly on your machine, set your DNS resolver to point to your Raspberry Pi (since Pi-hole will be responsible for resolving these domains).
 
 ### Home Assistant Setup
 
@@ -170,7 +155,7 @@ For extra customizations and tools, you can install the Home Assistant Community
 
 ## Tools Used
 
-- **[nginx-proxy-manager](https://nginxproxymanager.com)**: A reverse proxy using NGINX to automatically route HTTP requests to Docker containers based on environment variables.
+- **[nginx-proxy](https://github.com/nginx-proxy/nginx-proxy)**: Automated nginx reverse proxy for Docker containers that automatically creates proxy configurations based on container environment variables.
 
 - **[Grafana](https://grafana.com/docs/)**: Platform for monitoring and observability with customizable dashboards.
 
@@ -223,104 +208,3 @@ If you experience bandwidth issues between a WireGuard peer and the WireGuard se
 1. **Environment Variables**: Replace any placeholders in the `.env` file with the actual values relevant to your setup.
 2. **Custom Domains**: If you're using custom domains for services like WireGuard, verify that your DNS records are properly configured to point to your server.
 3. **Storage Optimization**: To enhance performance and extend the lifespan of your Raspberry Pi’s SD card, consider using an external SSD for Docker data storage.
-
-## Raspberry Pi Docker Error Watcher
-
-This script monitors system logs for a specific Docker error message and automatically reboots the Raspberry Pi when detected.
-
-### Error Condition
-
-The script watches for the following log entry:
-
-```
-level=error msg="stream copy error: reading from a closed fifo"
-```
-
-### Installation
-
-#### 1. Download the Script
-
-Make the script on this repository executable:
-
-```bash
-chmod +x $(PATH_TO_REPOSITORY)/watch_docker_error.sh
-```
-
-#### 2. Create a Systemd Service
-
-Create a systemd service file:
-
-```bash
-sudo nano /etc/systemd/system/docker-watch.service
-```
-
-Add the following content:
-
-```ini
-[Unit]
-Description=Watch Docker Logs for Error and Reboot
-After=network.target
-
-[Service]
-ExecStart=$(PATH_TO_REPOSITORY)/watch_docker_error.sh
-Restart=always
-User=root
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Save and exit.
-
-#### 3. Enable and Start the Service
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable docker-watch.service
-sudo systemctl start docker-watch.service
-```
-
-### Testing
-
-#### Manually Simulate the Error
-
-You can test the script by appending the error message to the system logs:
-
-```bash
-for i in {1..10}; do
-    echo "Mar 27 00:00:40 pihole dockerd[651]: time=\"2025-03-27T00:00:16.885860187-05:00\" level=error msg=\"copy stream failed\" error=\"reading from a closed fifo\" stream=stdout" | sudo systemd-cat -t dockerd -p err
-    sleep 6  # Optional, adds a slight delay
-done
-```
-
-If everything is working correctly, the Raspberry Pi should reboot.
-
-#### Check Service Status
-
-To verify if the service is running:
-
-```bash
-sudo systemctl status docker-watch.service
-```
-
-To view logs:
-
-```bash
-journalctl -u docker-watch.service -f
-```
-
-### Uninstalling
-
-To disable and remove the service:
-
-```bash
-sudo systemctl stop docker-watch.service
-sudo systemctl disable docker-watch.service
-sudo rm /etc/systemd/system/docker-watch.service
-```
-
-Reload systemd:
-
-```bash
-sudo systemctl daemon-reload
-```

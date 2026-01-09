@@ -8,27 +8,11 @@ services:
     ports:
       - '80:80'
     volumes:
-      - '/var/run/docker.sock:/tmp/docker.sock'
+      - '/var/run/docker.sock:/tmp/docker.sock:ro'
       - nginx_proxy_data:/etc/nginx
     networks:
       dns:
         ipv4_address: 172.30.0.5
-
-#  nginx-proxy-manager:
-#    image: jc21/nginx-proxy-manager:latest
-#    container_name: nginx-proxy-manager
-#    restart: unless-stopped
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#      - "81:81"
-#    volumes:
-#      - ./config/npm:/data
-#      - ./config/letsencrypt:/etc/letsencrypt
-#    networks:
-#      dns:
-#        ipv4_address: 172.30.0.5
-
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -148,7 +132,7 @@ services:
         ipv4_address: 172.30.0.4
 
   pihole:
-    image: pihole/pihole:2024.07.0
+    image: pihole/pihole:latest
     container_name: pihole
     restart: unless-stopped
     env_file:
@@ -164,7 +148,7 @@ services:
       - "grafana grafana.lan:${FTLCONF_LOCAL_IPV4}"
       - "prometheus prometheus.lan:${FTLCONF_LOCAL_IPV4}"
       - "wireguard wg.lan:${FTLCONF_LOCAL_IPV4}"
-      - "homeassistant homeassistant.lan:192.168.0.138"
+      - "homeassistant homeassistant.lan:${HOME_ASSISTANT_IPV4}"
       - "npm npm.lan:${FTLCONF_LOCAL_IPV4}"
     ports:
       - "53:53/tcp"
