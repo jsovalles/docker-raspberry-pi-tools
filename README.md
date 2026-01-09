@@ -11,8 +11,10 @@ Collection of Docker Compose configurations and scripts tailored for efficient d
     - [Config Folder Setup](#config-folder-setup)
       - [Setting Proper Permissions (Optional)](#setting-proper-permissions-optional)
   - [Environment Variables](#environment-variables)
-  - [Nginx Proxy Manager Configuration](#nginx-proxy-manager-configuration)
+  - [Nginx Proxy Configuration](#nginx-proxy-configuration)
     - [Configuration for .lan Domains](#configuration-for-lan-domains)
+    - [Home Assistant Setup](#home-assistant-setup)
+      - [Optional: Install HACS](#optional-install-hacs)
   - [Tools Used](#tools-used)
   - [Common Problems](#common-problems)
     - [Docker stats doesn't report memory usage](#docker-stats-doesnt-report-memory-usage)
@@ -101,6 +103,7 @@ WG_PORT=your_port
 TZ=your_timezone
 WEBPASSWORD=your_web_password
 FTLCONF_LOCAL_IPV4=your_raspberry_pi_ipv4
+HOME_ASSISTANT_IPV4=your_home_assistant_ipv4
 
 ## Watchtower
 # TZ variable is already defined on pihole
@@ -116,25 +119,43 @@ WATCHTOWER_NOTIFICATION_REPORT=true
 WATCHTOWER_NOTIFICATION_URL="discord://token@channel"
 # monitor only for testing purposes
 #WATCHTOWER_MONITOR_ONLY=true
+
+## Duckdns
+SUBDOMAINS=subdomain1,subdomain2
+TOKEN=your_duckdns_token
 ```
 
-## Nginx Proxy Manager Configuration
+## Nginx Proxy Configuration
 
-Once your Docker container is running, you can access the Nginx Proxy Manager (NPM) admin interface on port **81**. refer to the official [Nginx Proxy Manager guide](https://nginxproxymanager.com/guide/).
+> **TODO:** Migrate from nginx-proxy to Traefik for more advanced features and better configuration management.
 
 ### Configuration for .lan Domains
 
-To ensure that `.lan` domains work correctly on your machine, set your DNS resolver to point to your Raspberry Pi (since Pi-hole will be responsible for resolving these domains). Additionally, configure Nginx Proxy Manager as shown below:
+The nginx-proxy container automatically creates reverse proxy configurations for containers with `VIRTUAL_HOST` environment variables. To ensure that `.lan` domains work correctly on your machine, set your DNS resolver to point to your Raspberry Pi (since Pi-hole will be responsible for resolving these domains).
 
-<p align="center">
-	<img src="images/npm-configuration.png" alt="Nginx Proxy Manager Configuration">
-</p>
+### Home Assistant Setup
 
-**Important:** Enable **WebSocket support** for the Home Assistant domain. This is necessary for Home Assistant to function correctly.
+Follow these steps to configure your Home Assistant container, including support for Nginx proxy `lan` domain and optional integrations.
+
+To enable the Nginx proxy, access the container's bash session `docker exec -it home-assistant bash` and modify the `configuration.yaml` file:
+
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.0.5
+
+# Optional for prometheus container
+prometheus:
+```
+
+#### Optional: Install HACS
+
+For extra customizations and tools, you can install the Home Assistant Community Store (HACS) on the bash session. Follow the official [HACS installation guide.](https://hacs.xyz/docs/use/download/download/)
 
 ## Tools Used
 
-- **[nginx-proxy-manager](https://nginxproxymanager.com)**: A reverse proxy using NGINX to automatically route HTTP requests to Docker containers based on environment variables.
+- **[nginx-proxy](https://github.com/nginx-proxy/nginx-proxy)**: Automated nginx reverse proxy for Docker containers that automatically creates proxy configurations based on container environment variables.
 
 - **[Grafana](https://grafana.com/docs/)**: Platform for monitoring and observability with customizable dashboards.
 
@@ -153,7 +174,10 @@ To ensure that `.lan` domains work correctly on your machine, set your DNS resol
 - **[Unbound](https://github.com/MatthewVance/unbound-docker-rpi)**: Validating, recursive, caching DNS resolver focused on privacy and security.
 
 - **[Watchtower](https://containrrr.dev/watchtower/)**: Tool for automating Docker container updates, ensuring that running containers are always up-to-date.
+
 - **[Home Assistant](https://www.home-assistant.io/)**: Open source home automation that puts local control and privacy first.
+
+- **[Duckdns](https://docs.linuxserver.io/images/docker-duckdns/)**: Free service which will point a DNS (sub domains of duckdns.org) to an IP of your choice.
 
 ## Common Problems
 
